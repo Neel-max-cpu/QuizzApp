@@ -4,7 +4,7 @@ import Hero from './Components/Hero';
 
 
 function App() {
-  return (    
+  return (        
     <Hero/>    
   );
 }

@@ -141,6 +141,7 @@ const Hero = () => {
     //     }
     // ]
 
+    /*
     const [questions, setQuestions] = useState([])
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
@@ -207,59 +208,54 @@ const Hero = () => {
         setError(null)
     }
 
-    if(error){
-        return (
+    // if(error){
+    //     return (
 
-        )
-    }
+    //     )
+    // }
 
-    if(!quizStarted){
+    // if(!quizStarted){
 
-    }
+    // }
 
-    if(loading){
+    // if(loading){
 
-    }
+    // }
 
-    if(questions.length===0){
-        
-    }
+    // if(questions.length===0){
+
+    // }
+    */
 
     return (
         <div class="flex justify-center items-center h-screen">
             <div class="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
                 <h2 class="text-2xl font-bold mb-4">Quiz App</h2>
-                {!quizCompleted ? (
-                    <>
-                        <p class="text-lg font-semibold mb-2">Question {currentQuestion + 1} of {questions.length}</p>
-                        <p class="mb-6">{questions[currentQuestion].question}</p>
+                <p class="text-lg font-semibold mb-2">Question 1 of 10</p>
+                <p class="mb-6">In "Jurassic World", which company purchases InGen and creates Jurassic World?</p>
 
-                        <form className="text-left space-y-4">
-                            {allAnswers.map((answer, index) => (
-                                <label key={index} className="block">
-                                    <input type="radio" name="answer" className="mr-2" value={answer} />
-                                    {answer}
-                                </label>
-                            ))}
-                        </form>
-                    </>
-                ) : (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-                        <p className="text-xl">
-                            Your score: {score} out of {questions.length}
-                        </p>
-                    </div>
-                )}
-                {!quizCompleted ? (
-                    <button className="bg-gray-500 text-white px-4 py-2 mt-6 rounded-lg hover:bg-green-500">
-                        Next Question
-                    </button>
-                ) : (
-                    <button className="bg-gray-500 text-white px-4 py-2 mt-6 rounded-lg hover:bg-green-500">
-                        Restart Quiz
-                    </button>
-                )}
+                <form class="text-left space-y-4">
+                    <label class="block">
+                        <input type="radio" name="answer" class="mr-2" />
+                        Biology Synthetics Technologies
+                    </label>
+                    <label class="block">
+                        <input type="radio" name="answer" class="mr-2" />
+                        International Genetic Technologies
+                    </label>
+                    <label class="block">
+                        <input type="radio" name="answer" class="mr-2" />
+                        International Genetic Incorporation
+                    </label>
+                    <label class="block">
+                        <input type="radio" name="answer" class="mr-2" />
+                        Masrani Global Corporation
+                    </label>
+                </form>
+
+                <button class="bg-gray-500 text-white px-4 py-2 mt-6 rounded-lg hover:bg-greean">
+                    Next Question
+                </button>
             </div>
         </div>
     )

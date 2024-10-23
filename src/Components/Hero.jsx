@@ -1,4 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
+// import LinearProgress from './LinearProgress';
+
+import Box from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
 
 
 // https://opentdb.com/api_config.php -- website
@@ -228,6 +232,7 @@ const Hero = () => {
     const [error, setError] = useState(null)
     const [quizStarted, setQuizStarted] = useState(false)
     const [timeLeft, setTimeLeft] = useState(15)
+    const [progress, setProgress] = useState(100)
 
 
     const fetchQuestions = async () => {
@@ -279,18 +284,18 @@ const Hero = () => {
 
     const handleAnswer = useCallback(() => {
         if (selectedAnswer === questions[currentQuestion].correctAnswer) {
-          setScore((prevScore) => prevScore + 1)
+            setScore((prevScore) => prevScore + 1)
         }
-    
+
         if (currentQuestion < questions.length - 1) {
-          setCurrentQuestion((prevQuestion) => prevQuestion + 1)
-          setSelectedAnswer("")
-          setTimeLeft(15)
+            setCurrentQuestion((prevQuestion) => prevQuestion + 1)
+            setSelectedAnswer("")
+            setTimeLeft(15)
         } else {
-          setQuizCompleted(true)
+            setQuizCompleted(true)
         }
-      }, [selectedAnswer, questions, currentQuestion])
-    
+    }, [selectedAnswer, questions, currentQuestion])
+
 
 
     const restartQuiz = () => {
@@ -304,17 +309,34 @@ const Hero = () => {
         setTimeLeft(15)
     }
 
+    // useEffect(() => {
+    //     let timer
+    //     if (quizStarted && !quizCompleted && timeLeft > 0) {
+    //         timer = setTimeout(() => {
+    //             setTimeLeft(timeLeft - 1)
+    //         }, 1000)
+    //     } else if (timeLeft === 0) {
+    //         handleAnswer()
+    //     }
+    //     return () => clearTimeout(timer)
+    // }, [quizStarted, quizCompleted, timeLeft, handleAnswer]);
+
+
     useEffect(() => {
         let timer
         if (quizStarted && !quizCompleted && timeLeft > 0) {
-            timer = setTimeout(() => {
-                setTimeLeft(timeLeft - 1)
-            }, 1000)
-        } else if (timeLeft === 0) {
+            timer = setInterval(() => {
+                setTimeLeft((prevTime) => {
+                    const newTime = Math.max(prevTime - 0.1, 0)
+                    setProgress((newTime / 15) * 100)
+                    return newTime
+                })
+            }, 100)
+        } else if (timeLeft <= 0) {
             handleAnswer()
         }
-        return () => clearTimeout(timer)
-    }, [quizStarted, quizCompleted, timeLeft, handleAnswer]);
+        return () => clearInterval(timer)
+    }, [quizStarted, quizCompleted, timeLeft, handleAnswer])
 
 
 
@@ -323,7 +345,7 @@ const Hero = () => {
             <div className="flex justify-center items-center h-screen">
                 <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
                     <p className="text-xl text-red-500">{error}</p>
-                    <button onClick={startQuiz} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                    <button onClick={startQuiz} className="bg-red-500 text-white px-4 py-2 mt-6 rounded-lg">
                         Try Again
                     </button>
                 </div>
@@ -336,10 +358,10 @@ const Hero = () => {
     if (!quizStarted) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
-                    <h2 className="text-2xl font-bold mb-4">Quiz App</h2>
+                <div className="bg-yellow-500 shadow-lg rounded-lg p-6 max-w-md text-center">
+                    <h2 className=" text-white text-2xl font-bold mb-4">Quiz App</h2>
                     <p className="text-xl mb-4">Are you ready to start the quiz?</p>
-                    <button onClick={startQuiz} disabled={loading} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                    <button onClick={startQuiz} disabled={loading} className="bg-red-500 text-white px-4 py-2 mt-6 rounded-lg">
                         {loading ? "Loading Questions..." : "Start Quiz"}
                     </button>
                 </div>
@@ -363,7 +385,7 @@ const Hero = () => {
             <div className="flex justify-center items-center h-screen">
                 <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
                     <p className="text-xl">No questions available. Please try again.</p>
-                    <button onClick={startQuiz} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                    <button onClick={startQuiz} className="bg-red-500 text-white px-4 py-2 mt-6 rounded-lg">
                         Reload Questions
                     </button>
                 </div>
@@ -372,21 +394,25 @@ const Hero = () => {
     }
 
 
+
     return (
         <div className="flex justify-center items-center h-screen">
-            <div className="bg-white shadow-lg rounded-lg p-6 max-w-md">
-                <h2 className="text-2xl font-bold text-center mb-4">Quiz App</h2>
+            <div className="bg-yellow-500 shadow-lg rounded-lg p-6 max-w-md">
+                <h2 className="text-white text-2xl font-bold text-center mb-4">Quiz App</h2>
                 {!quizCompleted ? (
                     <>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">
                                 Question {currentQuestion + 1} of {questions.length}
                             </h2>
-                            <span className="text-lg font-medium">Time left: {timeLeft}s</span>
+                            <span className="text-lg font-medium">Time left: {Math.ceil(timeLeft)}s</span>
                         </div>
-                        <div className="mb-4">
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress variant="determinate" value={progress} />
+                        </Box>
+                        {/* <div className="mb-4">
                             <progress value={timeLeft} max="15" className="w-full" />
-                        </div>
+                        </div> */}
                         <p
                             className="text-lg mb-4"
                             dangerouslySetInnerHTML={{ __html: questions[currentQuestion].question }}
@@ -418,12 +444,12 @@ const Hero = () => {
                         <button
                             onClick={handleAnswer}
                             disabled={!selectedAnswer}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg"
                         >
                             {currentQuestion < questions.length - 1 ? "Next Question" : "Finish Quiz"}
                         </button>
                     ) : (
-                        <button onClick={restartQuiz} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                        <button onClick={restartQuiz} className="bg-red-500 text-white px-4 py-2 rounded-lg">
                             Restart Quiz
                         </button>
                     )}

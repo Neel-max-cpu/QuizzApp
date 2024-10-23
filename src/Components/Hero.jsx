@@ -358,7 +358,7 @@ const Hero = () => {
     if (!quizStarted) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="bg-yellow-500 shadow-lg rounded-lg p-6 max-w-md text-center">
+                <div className="bg-customGreen shadow-lg rounded-lg p-6 max-w-md text-center">
                     <h2 className=" text-white text-2xl font-bold mb-4">Quiz App</h2>
                     <p className="text-xl mb-4">Are you ready to start the quiz?</p>
                     <button onClick={startQuiz} disabled={loading} className="bg-red-500 text-white px-4 py-2 mt-6 rounded-lg">
@@ -397,7 +397,7 @@ const Hero = () => {
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <div className="bg-yellow-500 shadow-lg rounded-lg p-6 max-w-md">
+            <div className="bg-customGreen shadow-lg rounded-lg p-6 max-w-md">
                 <h2 className="text-white text-2xl font-bold text-center mb-4">Quiz App</h2>
                 {!quizCompleted ? (
                     <>

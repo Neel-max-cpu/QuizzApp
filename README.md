@@ -1,7 +1,26 @@
-# Getting Started with Create React App
+# Quiz App : A Triva app :tada:
+
+## Check your triva knowledged across various topics 🚀💡
+
+## Live Demo here  -> [Link](https://trivaquizapp.netlify.app/) ⭐
+
+<!-- ## Working of the App Video -> [Link](https://youtu.be/5e3aaIEiau8)✨ -->
+
+### Images of the App with there prompt! :memo:
+![Image 1](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/1.png?raw=true)
+![Image 2](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/2.png?raw=true)
+![Image 3](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/3.png?raw=true)
+![Image 4](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/4.png?raw=true)
+![Image 5](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/5.png?raw=true)
+![Image 6](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/6.png?raw=true)
+
+
+## The api is used from OpenDb - https://opentdb.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Also, Styling done with Tailwind CSS
 
+## Getting Started with Create React App
 ## Available Scripts
 
 In the project directory, you can run:
@@ -68,3 +87,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+😃

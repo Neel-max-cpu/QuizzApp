@@ -1,7 +1,7 @@
 # Quiz App : A Triva app :tada:
 
 <!-- put topic option and give answers if correct/wrongZ -->
-<!-- anime/manga, animals, science and nature, history, geography, anycatogry(already done) -->
+<!-- geography, animal -->
 
 
 ## Check your triva knowledged across various topics 🚀💡

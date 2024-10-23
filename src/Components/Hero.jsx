@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
+import Card from './Card'
 
 
 // https://opentdb.com/api_config.php -- website
 // https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple
 
-const shuffleArray = (array) => {
-    return array.sort(() => Math.random() - 0.5);
-};
+// const shuffleArray = (array) => {
+//     return array.sort(() => Math.random() - 0.5);
+// };
 
 
 
@@ -217,8 +217,8 @@ const Hero = () => {
 
     */
 
-    return(
-    <h1>hellow</h1>
+    return(        
+        <Card/>
     )
 }
 

@@ -273,6 +273,7 @@ const Hero = () => {
     const [timeLeft, setTimeLeft] = useState(15)
     const [progress, setProgress] = useState(100)
     const [selectedCategory, setSelectedCategory] = useState(null)
+    const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
 
 
     const fetchQuestions = async (api) => {
@@ -325,17 +326,24 @@ const Hero = () => {
 
     const handleAnswer = useCallback(() => {
         if (selectedAnswer === questions[currentQuestion].correctAnswer) {
-            setScore((prevScore) => prevScore + 1)
+            setScore((prevScore) => prevScore + 1);
         }
 
-        if (currentQuestion < questions.length - 1) {
-            setCurrentQuestion((prevQuestion) => prevQuestion + 1)
-            setSelectedAnswer("")
-            setTimeLeft(15)
-        } else {
-            setQuizCompleted(true)
-        }
-    }, [selectedAnswer, questions, currentQuestion])
+        setShowCorrectAnswer(true); // Show correct answer
+
+        setTimeout(() => {
+            if (currentQuestion < questions.length - 1) {
+                setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+                setSelectedAnswer("");
+                setTimeLeft(15);
+                setProgress(100); // Assuming you have progress set up
+                setShowCorrectAnswer(false); // Hide correct answer after moving to next question
+            } else {
+                setQuizCompleted(true);
+            }
+        }, 2000); // Show the correct answer for 2 seconds
+    }, [selectedAnswer, questions, currentQuestion]);
+
 
 
 
@@ -367,7 +375,7 @@ const Hero = () => {
 
     useEffect(() => {
         let timer
-        if (quizStarted && !quizCompleted && timeLeft > 0) {
+        if (quizStarted && !quizCompleted && timeLeft > 0 && !showCorrectAnswer) {
             timer = setInterval(() => {
                 setTimeLeft((prevTime) => {
                     const newTime = Math.max(prevTime - 0.1, 0)
@@ -375,11 +383,11 @@ const Hero = () => {
                     return newTime
                 })
             }, 100)
-        } else if (timeLeft <= 0) {
+        } else if (timeLeft <= 0 && !showCorrectAnswer) {
             handleAnswer()
         }
         return () => clearInterval(timer)
-    }, [quizStarted, quizCompleted, timeLeft, handleAnswer])
+    }, [quizStarted, quizCompleted, timeLeft, showCorrectAnswer, handleAnswer])
 
 
 
@@ -497,6 +505,13 @@ const Hero = () => {
                                 </label>
                             ))}
                         </div>
+                        {showCorrectAnswer && (
+                            <div className="mt-4 p-4 bg-green-100 border border-green-400 rounded-md">
+                                <p className="text-green-700 font-semibold">
+                                    Correct Answer: {questions[currentQuestion].correctAnswer}
+                                </p>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="text-center">
@@ -508,8 +523,8 @@ const Hero = () => {
                     {!quizCompleted ? (
                         <button
                             onClick={handleAnswer}
-                            disabled={!selectedAnswer}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                            disabled={!selectedAnswer || showCorrectAnswer}
+                            className={`${!selectedAnswer || showCorrectAnswer ? "bg-red-300 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"} text-white px-4 py-2 rounded-lg`}
                         >
                             {currentQuestion < questions.length - 1 ? "Next Question" : "Finish Quiz"}
                         </button>

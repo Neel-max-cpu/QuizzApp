@@ -1,5 +1,9 @@
 # Quiz App : A Triva app :tada:
 
+<!-- put topic option and give answers if correct/wrongZ -->
+<!-- anime/manga, animals, science and nature, history, geography, anycatogry(already done) -->
+
+
 ## Check your triva knowledged across various topics 🚀💡
 
 ## Live Demo here  -> [Link](https://trivaquizapp.netlify.app/) ⭐
@@ -7,6 +11,7 @@
 <!-- ## Working of the App Video -> [Link](https://youtu.be/5e3aaIEiau8)✨ -->
 
 ### Images of the App with there prompt! :memo:
+![Image 0](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/0.png?raw=true)
 ![Image 1](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/1.png?raw=true)
 ![Image 2](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/2.png?raw=true)
 ![Image 3](https://github.com/Neel-max-cpu/QuizzApp/blob/main/public/image/3.png?raw=true)

@@ -6,12 +6,51 @@ import LinearProgress from '@mui/material/LinearProgress'
 
 
 // https://opentdb.com/api_config.php -- website
+
+// General Knowledge---
 // https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple
+
+// anime/manga---
+// https://opentdb.com/api.php?amount=10&category=31&difficulty=medium&type=multiple
+
+// cartoon/animation ---
+// https://opentdb.com/api.php?amount=10&category=32&difficulty=medium&type=multiple
+
+
+// animals --
+// https://opentdb.com/api.php?amount=10&category=27&difficulty=medium&type=multiple
+
+
+// science and nature ---
+// https://opentdb.com/api.php?amount=10&category=17&difficulty=medium&type=multiple
+
+// history---
+// https://opentdb.com/api.php?amount=10&category=23&difficulty=medium&type=multiple
+
+// geography---
+// https://opentdb.com/api.php?amount=10&category=22&difficulty=medium&type=multiple
+
+
+
+
+
 
 // const shuffleArray = (array) => {
 //     return array.sort(() => Math.random() - 0.5);
 // };
 
+
+
+const categories = [
+    { name: "General Knowledge", api: "https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple" },
+    { name: "Anime", api: "https://opentdb.com/api.php?amount=10&category=31&difficulty=medium&type=multiple" },
+    { name: "Cartoon", api: "https://opentdb.com/api.php?amount=10&category=32&difficulty=medium&type=multiple" },
+    { name: "Animals", api: "https://opentdb.com/api.php?amount=10&category=27&difficulty=medium&type=multiple" },
+    { name: "Science", api: "https://opentdb.com/api.php?amount=10&category=17&difficulty=medium&type=multiple" },
+    { name: "History", api: "https://opentdb.com/api.php?amount=10&category=23&difficulty=medium&type=multiple" },
+    { name: "Geography", api: "https://opentdb.com/api.php?amount=10&category=22&difficulty=medium&type=multiple" },
+    { name: "Movies", api: "https://opentdb.com/api.php?amount=10&category=11&difficulty=medium&type=multiple" },
+]
 
 
 const Hero = () => {
@@ -233,15 +272,14 @@ const Hero = () => {
     const [quizStarted, setQuizStarted] = useState(false)
     const [timeLeft, setTimeLeft] = useState(15)
     const [progress, setProgress] = useState(100)
+    const [selectedCategory, setSelectedCategory] = useState(null)
 
 
-    const fetchQuestions = async () => {
+    const fetchQuestions = async (api) => {
         setLoading(true)
         setError(null)
         try {
-            const response = await fetch(
-                "https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple"
-            )
+            const response = await fetch(api)
             const data = await response.json()
             if (data.results && data.results.length > 0) {
                 const formattedQuestions = data.results.map((q) => ({
@@ -250,6 +288,9 @@ const Hero = () => {
                     correctAnswer: q.correct_answer,
                 }))
                 setQuestions(formattedQuestions)
+                setQuizStarted(true)
+                setTimeLeft(15)
+                setProgress(100)
             } else {
                 throw new Error("No questions received from the API")
             }
@@ -262,10 +303,10 @@ const Hero = () => {
     }
 
 
-    const startQuiz = async () => {
-        await fetchQuestions()
-        setQuizStarted(true)
-        setTimeLeft(15)
+
+    const startQuiz = async (category) => {
+        setSelectedCategory(category)
+        await fetchQuestions(category.api)
     }
 
     // const handleAnswer = () => {
@@ -307,6 +348,8 @@ const Hero = () => {
         setQuizStarted(false)
         setError(null)
         setTimeLeft(15)
+        setProgress(100)
+        setSelectedCategory(null)
     }
 
     // useEffect(() => {
@@ -358,16 +401,38 @@ const Hero = () => {
     if (!quizStarted) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="bg-customGreen shadow-lg rounded-lg p-6 max-w-md text-center">
-                    <h2 className=" text-white text-2xl font-bold mb-4">Quiz App</h2>
-                    <p className="text-xl mb-4">Are you ready to start the quiz?</p>
-                    <button onClick={startQuiz} disabled={loading} className="bg-red-500 text-white px-4 py-2 mt-6 rounded-lg">
-                        {loading ? "Loading Questions..." : "Start Quiz"}
-                    </button>
+                <div className="bg-customGreen shadow-lg rounded-lg p-6 max-w-lg mx-auto">
+                    <h2 className="text-2xl font-bold text-center mb-4">Quiz App</h2>
+                    <div className="text-center py-10">
+                        <p className="text-xl mb-4">Choose a quiz category:</p>
+                        <div className="flex flex-col space-y-2">
+                            {categories.map((category) => (
+                                <button
+                                    key={category.name}
+                                    onClick={() => startQuiz(category)}
+                                    disabled={loading}
+                                    className="bg-white text-black px-4 py-2 rounded-lg w-full"
+                                >
+                                    {loading && selectedCategory?.name === category.name ? (
+                                        <span className="flex items-center">
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Loading...
+                                        </span>
+                                    ) : (
+                                        category.name
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
-        )
+        );
     }
+
 
 
     if (loading) {
@@ -398,7 +463,7 @@ const Hero = () => {
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="bg-customGreen shadow-lg rounded-lg p-6 max-w-md">
-                <h2 className="text-white text-2xl font-bold text-center mb-4">Quiz App</h2>
+                <h2 className="text-white text-2xl font-bold text-center mb-4">{selectedCategory.name} Quiz App</h2>
                 {!quizCompleted ? (
                     <>
                         <div className="flex justify-between items-center mb-4">

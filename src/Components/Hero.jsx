@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import Card from './Card'
+import React, { useCallback, useEffect, useState } from 'react'
 
 
 // https://opentdb.com/api_config.php -- website
@@ -217,8 +216,220 @@ const Hero = () => {
 
     */
 
-    return(        
-        <Card/>
+
+
+
+    const [questions, setQuestions] = useState([])
+    const [currentQuestion, setCurrentQuestion] = useState(0)
+    const [score, setScore] = useState(0)
+    const [selectedAnswer, setSelectedAnswer] = useState("")
+    const [quizCompleted, setQuizCompleted] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [quizStarted, setQuizStarted] = useState(false)
+    const [timeLeft, setTimeLeft] = useState(15)
+
+
+    const fetchQuestions = async () => {
+        setLoading(true)
+        setError(null)
+        try {
+            const response = await fetch(
+                "https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple"
+            )
+            const data = await response.json()
+            if (data.results && data.results.length > 0) {
+                const formattedQuestions = data.results.map((q) => ({
+                    question: q.question,
+                    options: [...q.incorrect_answers, q.correct_answer].sort(() => Math.random() - 0.5),
+                    correctAnswer: q.correct_answer,
+                }))
+                setQuestions(formattedQuestions)
+            } else {
+                throw new Error("No questions received from the API")
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error)
+            setError("Failed to load questions. Please try again.")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    const startQuiz = async () => {
+        await fetchQuestions()
+        setQuizStarted(true)
+        setTimeLeft(15)
+    }
+
+    // const handleAnswer = () => {
+    //     if (selectedAnswer === questions[currentQuestion].correctAnswer) {
+    //         setScore(score + 1)
+    //     }
+
+    //     if (currentQuestion < questions.length - 1) {
+    //         setCurrentQuestion(currentQuestion + 1)
+    //         setSelectedAnswer("")
+    //         setTimeLeft(15)
+    //     } else {
+    //         setQuizCompleted(true)
+    //     }
+    // }
+
+    const handleAnswer = useCallback(() => {
+        if (selectedAnswer === questions[currentQuestion].correctAnswer) {
+          setScore((prevScore) => prevScore + 1)
+        }
+    
+        if (currentQuestion < questions.length - 1) {
+          setCurrentQuestion((prevQuestion) => prevQuestion + 1)
+          setSelectedAnswer("")
+          setTimeLeft(15)
+        } else {
+          setQuizCompleted(true)
+        }
+      }, [selectedAnswer, questions, currentQuestion])
+    
+
+
+    const restartQuiz = () => {
+        setQuestions([])
+        setCurrentQuestion(0)
+        setScore(0)
+        setSelectedAnswer("")
+        setQuizCompleted(false)
+        setQuizStarted(false)
+        setError(null)
+        setTimeLeft(15)
+    }
+
+    useEffect(() => {
+        let timer
+        if (quizStarted && !quizCompleted && timeLeft > 0) {
+            timer = setTimeout(() => {
+                setTimeLeft(timeLeft - 1)
+            }, 1000)
+        } else if (timeLeft === 0) {
+            handleAnswer()
+        }
+        return () => clearTimeout(timer)
+    }, [quizStarted, quizCompleted, timeLeft, handleAnswer]);
+
+
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
+                    <p className="text-xl text-red-500">{error}</p>
+                    <button onClick={startQuiz} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+
+
+    if (!quizStarted) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
+                    <h2 className="text-2xl font-bold mb-4">Quiz App</h2>
+                    <p className="text-xl mb-4">Are you ready to start the quiz?</p>
+                    <button onClick={startQuiz} disabled={loading} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                        {loading ? "Loading Questions..." : "Start Quiz"}
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
+                    <p className="text-xl">Loading questions...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (questions.length === 0) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
+                    <p className="text-xl">No questions available. Please try again.</p>
+                    <button onClick={startQuiz} className="bg-blue-500 text-white px-4 py-2 mt-6 rounded-lg">
+                        Reload Questions
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="bg-white shadow-lg rounded-lg p-6 max-w-md">
+                <h2 className="text-2xl font-bold text-center mb-4">Quiz App</h2>
+                {!quizCompleted ? (
+                    <>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold">
+                                Question {currentQuestion + 1} of {questions.length}
+                            </h2>
+                            <span className="text-lg font-medium">Time left: {timeLeft}s</span>
+                        </div>
+                        <div className="mb-4">
+                            <progress value={timeLeft} max="15" className="w-full" />
+                        </div>
+                        <p
+                            className="text-lg mb-4"
+                            dangerouslySetInnerHTML={{ __html: questions[currentQuestion].question }}
+                        />
+                        <div className="space-y-2">
+                            {questions[currentQuestion].options.map((option, index) => (
+                                <label key={index} className="block">
+                                    <input
+                                        type="radio"
+                                        name="answer"
+                                        value={option}
+                                        checked={selectedAnswer === option}
+                                        onChange={() => setSelectedAnswer(option)}
+                                        className="mr-2"
+                                    />
+                                    <span dangerouslySetInnerHTML={{ __html: option }} />
+                                </label>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
+                        <p className="text-xl">Your score: {score} out of {questions.length}</p>
+                    </div>
+                )}
+                <div className="flex justify-center mt-6">
+                    {!quizCompleted ? (
+                        <button
+                            onClick={handleAnswer}
+                            disabled={!selectedAnswer}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                        >
+                            {currentQuestion < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                        </button>
+                    ) : (
+                        <button onClick={restartQuiz} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                            Restart Quiz
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
     )
 }
 
